@@ -1,0 +1,29 @@
+// Prisma Schema for Post Management System
+// Database: PostgreSQL (Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  link      String   @unique
+  author    String?
+  keywords  String[]
+  isJob     Boolean  @default(false)
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([link])
+  @@index([processed])
+  @@index([isJob])
+  @@index([createdAt])
+  @@map("posts")
+}

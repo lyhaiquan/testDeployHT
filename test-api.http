@@ -1,0 +1,237 @@
+### Test Posts API Endpoints
+### Use REST Client extension in VS Code to test these
+
+@baseUrl = http://localhost:3000
+
+###############################################################################
+### 1. Batch Create Posts (Main Endpoint)
+###############################################################################
+
+POST {{baseUrl}}/posts/batch
+Content-Type: application/json
+
+{
+  "posts": [
+    {
+      "content": "Looking for senior React developer with 5+ years experience. Remote position, competitive salary.",
+      "link": "https://www.facebook.com/groups/devjobs/posts/123456001",
+      "author": "John Smith",
+      "keywords": ["react", "developer", "remote", "senior", "job"],
+      "isJob": true
+    },
+    {
+      "content": "Great tutorial on NestJS and Prisma integration! Step by step guide for beginners.",
+      "link": "https://www.facebook.com/groups/nestjs/posts/789012002",
+      "author": "Jane Doe",
+      "keywords": ["nestjs", "prisma", "tutorial", "backend"]
+    },
+    {
+      "content": "Hiring fullstack developers for startup. Must know TypeScript and PostgreSQL.",
+      "link": "https://www.facebook.com/groups/startup/posts/456789003",
+      "author": "Tech Startup Inc",
+      "keywords": ["fullstack", "typescript", "postgresql", "startup"],
+      "isJob": true
+    }
+  ]
+}
+
+###############################################################################
+### 2. Batch Create (Test Duplicates)
+###############################################################################
+
+POST {{baseUrl}}/posts/batch
+Content-Type: application/json
+
+{
+  "posts": [
+    {
+      "content": "Duplicate post - should be skipped",
+      "link": "https://www.facebook.com/groups/devjobs/posts/123456001",
+      "author": "John Smith"
+    },
+    {
+      "content": "New post - should be inserted",
+      "link": "https://www.facebook.com/groups/new/posts/999999",
+      "author": "New Author",
+      "keywords": ["new", "unique"]
+    }
+  ]
+}
+
+###############################################################################
+### 3. Create Single Post
+###############################################################################
+
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "content": "Single post for testing purposes. This is a longer content to meet validation requirements.",
+  "link": "https://www.facebook.com/groups/test/posts/single001",
+  "author": "Test User",
+  "keywords": ["test", "single"]
+}
+
+###############################################################################
+### 4. Get All Posts (Paginated)
+###############################################################################
+
+GET {{baseUrl}}/posts?page=1&limit=10
+
+###############################################################################
+### 5. Get Posts - Page 2
+###############################################################################
+
+GET {{baseUrl}}/posts?page=2&limit=5
+
+###############################################################################
+### 6. Search Posts by Keyword
+###############################################################################
+
+GET {{baseUrl}}/posts?keyword=developer
+
+###############################################################################
+### 7. Search Posts - React
+###############################################################################
+
+GET {{baseUrl}}/posts?keyword=react&limit=20
+
+###############################################################################
+### 8. Get Statistics
+###############################################################################
+
+GET {{baseUrl}}/posts/stats
+
+###############################################################################
+### 9. Get Unprocessed Posts
+###############################################################################
+
+GET {{baseUrl}}/posts/unprocessed?limit=50
+
+###############################################################################
+### 10. Get Single Post by ID
+### Replace {postId} with actual UUID from previous responses
+###############################################################################
+
+@postId = 550e8400-e29b-41d4-a716-446655440000
+
+GET {{baseUrl}}/posts/{{postId}}
+
+###############################################################################
+### 11. Update Post Processed Status
+### Replace {postId} with actual UUID
+###############################################################################
+
+PATCH {{baseUrl}}/posts/{{postId}}/processed
+Content-Type: application/json
+
+{
+  "processed": true
+}
+
+###############################################################################
+### 12. Update Post - Set Unprocessed
+###############################################################################
+
+PATCH {{baseUrl}}/posts/{{postId}}/processed
+Content-Type: application/json
+
+{
+  "processed": false
+}
+
+###############################################################################
+### 13. Delete Post
+### Replace {postId} with actual UUID
+###############################################################################
+
+DELETE {{baseUrl}}/posts/{{postId}}
+
+###############################################################################
+### 14. Validation Tests - Invalid Content (Too Short)
+###############################################################################
+
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "content": "Short",
+  "link": "https://www.facebook.com/test"
+}
+
+###############################################################################
+### 15. Validation Tests - Invalid URL
+###############################################################################
+
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "content": "This is valid content with enough characters",
+  "link": "not-a-valid-url"
+}
+
+###############################################################################
+### 16. Validation Tests - Missing Required Fields
+###############################################################################
+
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "author": "Test User"
+}
+
+###############################################################################
+### 17. Batch with Empty Array
+###############################################################################
+
+POST {{baseUrl}}/posts/batch
+Content-Type: application/json
+
+{
+  "posts": []
+}
+
+###############################################################################
+### Chrome Extension Simulation - Large Batch
+###############################################################################
+
+POST {{baseUrl}}/posts/batch
+Content-Type: application/json
+
+{
+  "posts": [
+    {
+      "content": "Post about Vue.js 3 composition API and best practices for large scale applications",
+      "link": "https://www.facebook.com/groups/vuejs/posts/1001",
+      "author": "Vue Developer",
+      "keywords": ["vue", "composition-api", "javascript"]
+    },
+    {
+      "content": "Angular 17 new features and migration guide from previous versions",
+      "link": "https://www.facebook.com/groups/angular/posts/1002",
+      "author": "Angular Team",
+      "keywords": ["angular", "typescript", "frontend"]
+    },
+    {
+      "content": "Looking for backend developer with Node.js and MongoDB experience. 3+ years required.",
+      "link": "https://www.facebook.com/groups/jobs/posts/1003",
+      "author": "HR Manager",
+      "keywords": ["nodejs", "mongodb", "backend", "job"],
+      "isJob": true
+    },
+    {
+      "content": "Free webinar on Docker and Kubernetes for beginners. Register now!",
+      "link": "https://www.facebook.com/groups/devops/posts/1004",
+      "author": "DevOps Academy",
+      "keywords": ["docker", "kubernetes", "devops", "webinar"]
+    },
+    {
+      "content": "Python data science workshop this weekend. Topics include pandas, numpy, and scikit-learn.",
+      "link": "https://www.facebook.com/groups/datascience/posts/1005",
+      "author": "Data Science Community",
+      "keywords": ["python", "data-science", "pandas", "workshop"]
+    }
+  ]
+}
