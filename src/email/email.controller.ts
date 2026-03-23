@@ -7,12 +7,14 @@ import {
   HttpException,
   Logger,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { EmailService } from './email.service';
 import { SendEmailDto } from './dto/send-email.dto';
 
 /**
  * Controller handling email-related endpoints
  */
+@ApiTags('Emails')
 @Controller('email')
 export class EmailController {
   private readonly logger = new Logger(EmailController.name);
@@ -26,6 +28,10 @@ export class EmailController {
    */
   @Post('send')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send a single email' })
+  @ApiBody({ type: SendEmailDto })
+  @ApiResponse({ status: 200, description: 'Success' })
+  @ApiResponse({ status: 400, description: 'Validation error' })
   async sendEmail(@Body() dto: SendEmailDto): Promise<{ message: string }> {
     try {
       this.logger.log(`Received request to send email to ${dto.to}`);
@@ -54,6 +60,9 @@ export class EmailController {
    */
   @Post('send-bulk')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send bulk emails' })
+  @ApiBody({ schema: { type: 'object', properties: { emails: { type: 'array', items: { $ref: '#/components/schemas/SendEmailDto' } } } } })
+  @ApiResponse({ status: 200, description: 'Return success/failed count' })
   async sendBulkEmails(
     @Body() body: { emails: SendEmailDto[] },
   ): Promise<{ success: number; failed: number; message: string }> {

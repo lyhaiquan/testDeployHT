@@ -12,6 +12,7 @@ import {
   Logger,
   Patch,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { CreatePostsBatchDto } from './dto/create-posts-batch.dto';
@@ -21,6 +22,7 @@ import { QueryPostsDto } from './dto/query-posts.dto';
  * Controller handling post-related endpoints
  * Designed for Chrome Extension integration
  */
+@ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
   private readonly logger = new Logger(PostsController.name);
@@ -34,6 +36,10 @@ export class PostsController {
    */
   @Post('batch')
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Insert batch posts' })
+  @ApiBody({ type: CreatePostsBatchDto })
+  @ApiResponse({ status: 201, description: 'Batch insert success', schema: { example: { inserted: 2, skipped: 0, message: 'Successfully processed 2 posts. Inserted: 2, Skipped: 0', details: [] } } })
+  @ApiResponse({ status: 400, description: 'Validation error' })
   async createBatch(@Body() createPostsBatchDto: CreatePostsBatchDto): Promise<{
     inserted: number;
     skipped: number;
@@ -107,6 +113,11 @@ export class PostsController {
    * GET /posts?page=1&limit=20&keyword=developer
    */
   @Get()
+  @ApiOperation({ summary: 'Get posts with pagination and filtering' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (1-indexed)' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of posts per page' })
+  @ApiQuery({ name: 'keyword', required: false, type: String, description: 'Keyword to search (optional)' })
+  @ApiResponse({ status: 200, description: 'Return paginated data' })
   async findAll(@Query() queryDto: QueryPostsDto) {
     try {
       return await this.postsService.findAll(queryDto);
