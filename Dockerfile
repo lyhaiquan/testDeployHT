@@ -23,4 +23,4 @@ COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 EXPOSE 3000
 # Lưu ý: check xem file main của ông nằm ở dist/main hay dist/src/main
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/main.js"]
