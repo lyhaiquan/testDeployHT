@@ -1,0 +1,30 @@
+# Git
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log
+pnpm-debug.log
+
+# Build artifacts
+dist
+build
+
+# Environment files
+.env
+
+# IDE and OS specific
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Test reports
+coverage
+
+# Agent and temporary files
+.agents/
+.gemini/
+skills-lock.json

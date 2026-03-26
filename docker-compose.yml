@@ -1,0 +1,46 @@
+services:
+  # Backend Service (NestJS Application)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: job-hunter-backend
+    ports:
+      # Map port 3000 của container ra port 3000 của host
+      - "3001:3000"
+    # Load biến môi trường từ file .env
+    env_file:
+      - .env
+    depends_on:
+      # Đảm bảo service `db` khởi động trước `backend`
+      - db
+    networks:
+      - job-hunter-net
+    restart: unless-stopped
+
+  # Database Service (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: job-hunter-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      # Dùng named volume để lưu trữ dữ liệu DB
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - job-hunter-net
+    # Không cần map port của DB ra ngoài host để tăng tính bảo mật
+    restart: unless-stopped
+
+volumes:
+  # Định nghĩa named volume
+  pgdata:
+
+networks:
+  # Định nghĩa custom network
+  job-hunter-net:
+    driver: bridge
